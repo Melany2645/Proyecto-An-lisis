@@ -1,4 +1,5 @@
 public class Tablero {
+
     private Pieza[][] tablero;
     private int tamaño;
 
@@ -12,7 +13,7 @@ public class Tablero {
         this.tamaño = tamaño;
         this.tablero = new Pieza[tamaño][tamaño];
 
-        //Empirica 
+        // Medición empírica
         this.comparaciones = 0;
         this.asignaciones = 0;
         this.llamadasRecursivas = 0;
@@ -82,32 +83,32 @@ public class Tablero {
     }
 
     public void imprimirTablero() {
-        String nullTop = "  --   ";
-        String nullMiddle = String.format("%2s %s %2s", "--", " ", "--");
-        String nullBottom = "  --   ";
+        String vacioSuperior = "  --   ";
+        String vacioMedio = String.format("%2s %s %2s", "--", " ", "--");
+        String vacioInferior = "  --   ";
 
-        for (int i = 0; i < tamaño; i++) {
-            StringBuilder line0 = new StringBuilder();
-            StringBuilder line1 = new StringBuilder();
-            StringBuilder line2 = new StringBuilder();
+        for (int i = 0; i < tamaño; i++) { // Filas
+            StringBuilder lineaSuperior = new StringBuilder();
+            StringBuilder lineaMedia = new StringBuilder();
+            StringBuilder lineaInferior = new StringBuilder();
 
-            for (int j = 0; j < tamaño; j++) {
+            for (int j = 0; j < tamaño; j++) { // Columnas
                 if (tablero[i][j] != null) {
-                    String[] lines = tablero[i][j].toVisualLines();
-                    line0.append(lines[0]).append(" ");
-                    line1.append(lines[1]).append(" ");
-                    line2.append(lines[2]).append(" ");
+                    String[] lineasPieza = tablero[i][j].toVisualLines();
+                    lineaSuperior.append(lineasPieza[0]).append(" ");
+                    lineaMedia.append(lineasPieza[1]).append(" ");
+                    lineaInferior.append(lineasPieza[2]).append(" ");
                 } else {
-                    line0.append(nullTop).append(" ");
-                    line1.append(nullMiddle).append(" ");
-                    line2.append(nullBottom).append(" ");
+                    lineaSuperior.append(vacioSuperior).append(" ");
+                    lineaMedia.append(vacioMedio).append(" ");
+                    lineaInferior.append(vacioInferior).append(" ");
                 }
             }
 
-            System.out.println(line0.toString());
-            System.out.println(line1.toString());
-            System.out.println(line2.toString());
-            System.out.println(); // línea en blanco entre filas
+            System.out.println(lineaSuperior.toString());
+            System.out.println(lineaMedia.toString());
+            System.out.println(lineaInferior.toString());
+            System.out.println(); // línea en blanco entre filas, el orden más claro
         }
     }
 }
