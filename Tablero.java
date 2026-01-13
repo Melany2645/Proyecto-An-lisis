@@ -6,8 +6,9 @@ public class Tablero {
     //Contadores
     private long comparaciones;
     private long asignaciones;
-    private long llamadasRecursivas;
+    private long alternativas;
     private long podas;
+    private long instrucciones;
 
     public Tablero(int tamaño) {
         this.tamaño = tamaño;
@@ -16,8 +17,9 @@ public class Tablero {
         // Medición empírica
         this.comparaciones = 0;
         this.asignaciones = 0;
-        this.llamadasRecursivas = 0;
+        this.alternativas = 0;
         this.podas = 0;
+        this.instrucciones = 0;
     }
 
     public void colocarPieza(int fila, int columna, Pieza pieza) {
@@ -64,8 +66,8 @@ public class Tablero {
         return true;
 
     }
-    public void incrementarRecursivas() {
-        llamadasRecursivas++;
+    public void incrementarAlternativas() {
+        alternativas++;
     }
 
     // Getters para los contadores
@@ -75,11 +77,15 @@ public class Tablero {
     public long getAsignaciones() {
         return asignaciones;
     }
-    public long getLlamadasRecursivas() {
-        return llamadasRecursivas;
+    public long getAlternativas() {
+        return alternativas;
     }
     public long getPodas() {
         return podas;
+    }
+    public long getInstrucciones() {
+        instrucciones = comparaciones + asignaciones;
+        return instrucciones;
     }
 
     public void imprimirTablero() {

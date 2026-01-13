@@ -20,15 +20,19 @@ public class FuerzaBruta {
         boolean resultado = backtracking(0);
 
         long fin = System.nanoTime();
-        double duracion = (fin - inicio) / 1_000_000.0; // Duración en milisegundos
+        long elapsedNanos = fin - inicio;
+        double duracionSeg = elapsedNanos / 1_000_000_000.0; // Duración en segundos
+        double duracionMs = elapsedNanos / 1_000_000.0; // Duración en milisegundos
 
         System.out.println("====== Fuerza Bruta ======");
         System.out.println("Solución encontrada: " + resultado);
-        System.out.println("Duración: " + duracion + " ms");
-        System.out.println("Llamadas recursivas: " + tablero.getLlamadasRecursivas());
+        System.out.println("Duración: " + String.format("%.3f s (%d ms)", duracionSeg, Math.round(duracionMs)));
+        System.out.println("Alternativas exploradas: " + tablero.getAlternativas());
         System.out.println("Comparaciones: " + tablero.getComparaciones());
         System.out.println("Asignaciones: " + tablero.getAsignaciones());
         System.out.println("Podas realizadas: " + tablero.getPodas());
+        System.out.println("Instrucciones ejecutadas: " + tablero.getInstrucciones());
+        System.out.println("=========================");
 
         if (resultado) {
             System.out.println("Tablero solución:");
@@ -51,7 +55,7 @@ public class FuerzaBruta {
 
         for (Pieza pieza : piezas) {
             if (!pieza.isUsada()) {
-                tablero.incrementarRecursivas();
+                tablero.incrementarAlternativas();
                 if (tablero.encaja(fila, columna, pieza)) {
                     tablero.colocarPieza(fila, columna, pieza);
                     if (backtracking(pos + 1)) {
