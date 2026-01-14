@@ -5,7 +5,7 @@ public class MainFuerzaBruta {
     public static void main(String []args) {
 
         // Parámetros del problema, Prueba con tamaño 3 y valores entre 0 y 9
-        int tamaño = 3;
+        int tamaño = 6;
         int valorMaximo = 15;
 
         System.out.println("Iniciando prueba Fuerza Bruta");
