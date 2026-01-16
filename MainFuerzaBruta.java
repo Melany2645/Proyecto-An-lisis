@@ -4,7 +4,7 @@ public class MainFuerzaBruta {
 
     public static void main(String []args) {
 
-        // Parámetros del problema, Prueba con tamaño 3 y valores entre 0 y 9
+        // Parámetros del problema, Prueba con tamaño 3 y valores entre 0 y 9 o 0 y 15
         int tamaño = 6;
         int valorMaximo = 15;
 

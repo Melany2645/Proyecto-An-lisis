@@ -1,6 +1,10 @@
+/*
+ * Clase que representa un tablero para colocar piezas.
+ * @autor Melany Jirón Díaz
+ */
 public class Tablero {
 
-    private Pieza[][] tablero;
+    private Pieza[][] tablero; 
     private int tamaño;
 
     //Contadores
@@ -10,6 +14,11 @@ public class Tablero {
     private long podas;
     private long instrucciones;
 
+    /**
+     * Constructor de la clase Tablero.
+     * @param tamaño Tamaño del tablero (tamaño x tamaño).
+     * Inicialización del tablero y los contadores.
+     */
     public Tablero(int tamaño) {
         this.tamaño = tamaño;
         this.tablero = new Pieza[tamaño][tamaño];
@@ -22,6 +31,12 @@ public class Tablero {
         this.instrucciones = 0;
     }
 
+    /**
+     * Método para colocar una pieza en el tablero.
+     * @param fila Fila donde se colocará la pieza.
+     * @param columna Columna donde se colocará la pieza.
+     * @param pieza Pieza a colocar.
+     */
     public void colocarPieza(int fila, int columna, Pieza pieza) {
         tablero[fila][columna] = pieza;
         asignaciones++;
@@ -30,6 +45,11 @@ public class Tablero {
         asignaciones++;
     }
 
+    /**
+     * Método para quitar una pieza del tablero.
+     * @param fila Fila de la pieza a quitar.
+     * @param columna Columna de la pieza a quitar.
+     */
     public void quitarPieza(int fila, int columna) {
         Pieza pieza = tablero[fila][columna];
         asignaciones++;
@@ -42,8 +62,15 @@ public class Tablero {
         }
     }
 
+    /**
+     * Método para verificar si una pieza encaja en una posición dada del tablero.
+     * @param fila Fila donde se quiere colocar la pieza.
+     * @param columna Columna donde se quiere colocar la pieza.
+     * @param pieza Pieza a verificar.
+     * @return true si la pieza encaja, false en caso contrario.
+     */
     public boolean encaja(int fila, int columna, Pieza pieza) {
-        // Ver arriba
+        // Verificar en sentido vertical
         if (fila > 0 && tablero[fila - 1][columna] != null) {
             comparaciones++;
             Pieza piezaArriba = tablero[fila - 1][columna];
@@ -54,7 +81,7 @@ public class Tablero {
             }
         }
 
-        // Ver con la izquierda
+        // Verificar en sentido horizontal
         if (columna > 0 && tablero[fila][columna - 1] != null) {
             comparaciones++;
             Pieza piezaIzquierda = tablero[fila][columna - 1];
@@ -66,6 +93,9 @@ public class Tablero {
         return true;
 
     }
+    /**
+     * Método para incrementar el contador de alternativas exploradas.
+     */
     public void incrementarAlternativas() {
         alternativas++;
     }
@@ -88,6 +118,10 @@ public class Tablero {
         return instrucciones;
     }
 
+    /**
+     * Método para imprimir el tablero en la consola.
+     * Representación visual de las piezas y espacios vacíos.
+     */
     public void imprimirTablero() {
         String vacioSuperior = "  --   ";
         String vacioMedio = String.format("%2s %s %2s", "--", " ", "--");
