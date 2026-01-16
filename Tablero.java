@@ -1,6 +1,7 @@
 /*
  * Clase que representa un tablero para colocar piezas.
  * @autor Melany Jirón Díaz
+ * @version 1.0
  */
 public class Tablero {
 
@@ -123,32 +124,37 @@ public class Tablero {
      * Representación visual de las piezas y espacios vacíos.
      */
     public void imprimirTablero() {
-        String vacioSuperior = "  --   ";
-        String vacioMedio = String.format("%2s %s %2s", "--", " ", "--");
-        String vacioInferior = "  --   ";
 
-        for (int i = 0; i < tamaño; i++) { // Filas
-            StringBuilder lineaSuperior = new StringBuilder();
-            StringBuilder lineaMedia = new StringBuilder();
-            StringBuilder lineaInferior = new StringBuilder();
+        for (int i = 0; i < tamaño; i++) {
 
-            for (int j = 0; j < tamaño; j++) { // Columnas
-                if (tablero[i][j] != null) {
-                    String[] lineasPieza = tablero[i][j].toVisualLines();
-                    lineaSuperior.append(lineasPieza[0]).append(" ");
-                    lineaMedia.append(lineasPieza[1]).append(" ");
-                    lineaInferior.append(lineasPieza[2]).append(" ");
-                } else {
-                    lineaSuperior.append(vacioSuperior).append(" ");
-                    lineaMedia.append(vacioMedio).append(" ");
-                    lineaInferior.append(vacioInferior).append(" ");
+            for (int linea = 0; linea < 3; linea++) {
+
+                for (int j = 0; j < tamaño; j++) {
+
+                    if (tablero[i][j] != null) {
+                        System.out.print(tablero[i][j].visualizacionLineas()[linea] + " ");
+                    } else {
+                        imprimirVacio(linea);
+                    }
                 }
+
+                System.out.println();
             }
 
-            System.out.println(lineaSuperior.toString());
-            System.out.println(lineaMedia.toString());
-            System.out.println(lineaInferior.toString());
-            System.out.println(); // línea en blanco entre filas, el orden más claro
+            System.out.println();
+        }
+    }
+
+    /**
+     * Método auxiliar para imprimir una representación visual de una posición vacía en el tablero.
+     * @param linea Línea actual (0, 1 o 2) para determinar qué parte de la pieza vacía imprimir.
+     */
+    private void imprimirVacio(int linea) {
+
+        if (linea == 0 || linea == 2) {
+            System.out.print("  --   ");
+        } else {
+            System.out.print("--     -- ");
         }
     }
 }

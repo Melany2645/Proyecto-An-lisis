@@ -1,12 +1,24 @@
 import java.util.ArrayList;
 import java.util.Random;
 
+/*
+ * Clase que genera piezas para un tablero de tamaño dado con valores aleatorios.
+ * Asegura que las piezas generadas tengan una solución válida.
+ * @autor Melany Jirón Díaz
+ * @version 1.0
+ */
 public class Piezas {
     private ArrayList<Pieza> piezas;
     private int tamaño;
     private int valorMaximo;
     private Random random;
 
+    /**
+     * Constructor de la clase Piezas.
+     * @param tamaño Tamaño del tablero (tamaño x tamaño).
+     * @param valorMaximo Valor máximo para los lados de las piezas.
+     * Inicializa la lista de piezas y genera las piezas con solución.
+     */
     public Piezas(int tamaño, int valorMaximo) {
         this.tamaño = tamaño;
         this.valorMaximo = valorMaximo;
@@ -16,6 +28,10 @@ public class Piezas {
         piezasConSolucion();
     }
 
+    /*
+     * Método que genera piezas asegurando que haya una solución válida para el tablero.
+     * Cada pieza se crea de manera que sus lados coincidan con las piezas adyacentes.
+     */
     private void piezasConSolucion() {
 
         Pieza[][] tablero = new Pieza[tamaño][tamaño];
@@ -55,6 +71,9 @@ public class Piezas {
         desordenarPiezas();
     }
 
+    /* 
+     * Método para desordenar las piezas generadas aleatoriamente.
+     */
     private void desordenarPiezas() {
         for (int i = piezas.size() - 1; i > 0; i--) {
             int j = random.nextInt(i + 1);
@@ -65,7 +84,7 @@ public class Piezas {
     }
 
     // Método para obtener la lista de piezas
-    // Revisar, no olvidar
+    // Getters
     public ArrayList<Pieza> getPiezas() {
         return piezas;
     }

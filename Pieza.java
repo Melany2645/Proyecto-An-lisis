@@ -1,3 +1,8 @@
+/**
+ * Clase que representa una pieza del tablero con valores en sus cuatro lados.
+ * @autor Melany Jirón Díaz
+ * @version 1.0
+ */
 public class Pieza {
   
     private int arriba;
@@ -7,6 +12,13 @@ public class Pieza {
 
     private boolean usada;
 
+    /**
+     * Constructor de la clase Pieza.
+     * @param arriba Valor del lado superior.
+     * @param derecha Valor del lado derecho.
+     * @param abajo Valor del lado inferior.
+     * @param izquierda Valor del lado izquierdo.
+     */
     public Pieza(int arriba, int derecha, int abajo, int izquierda) {
         this.arriba = arriba;
         this.derecha = derecha;
@@ -15,6 +27,7 @@ public class Pieza {
         this.usada = false;
     }
 
+    // Getters y Setter
     public int getArriba() {
         return arriba;
     }
@@ -40,15 +53,18 @@ public class Pieza {
     }
 
     // Representación visual en 3 líneas para impresión en el tablero
-    public String[] toVisualLines() {
-        String a = String.format("%2d", arriba);
-        String d = String.format("%2d", derecha);
-        String b = String.format("%2d", abajo);
-        String l = String.format("%2d", izquierda);
+    /*
+     * @return Array de Strings con la representación visual de la pieza.
+     */
+    public String[] visualizacionLineas() {
+        String arri = String.format("%2d", arriba);
+        String dere = String.format("%2d", derecha);
+        String aba = String.format("%2d", abajo);
+        String izql = String.format("%2d", izquierda);
         String center = usada ? "*" : " ";
-        String top = String.format("  %2s   ", a);
-        String middle = String.format("%2s %s %2s", l, center, d);
-        String bottom = String.format("  %2s   ", b);
+        String top = String.format("  %2s   ", arri);
+        String middle = String.format("%2s %s %2s", izql, center, dere);
+        String bottom = String.format("  %2s   ", aba);
         return new String[] { top, middle, bottom };
     }
 
