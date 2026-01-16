@@ -1,5 +1,9 @@
 import java.util.ArrayList;
 
+/*
+ * Clase que implementa el algoritmo de fuerza bruta para resolver un problema de colocación de piezas en un tablero.
+ * @autor Melany Jirón Díaz
+ */
 public class FuerzaBruta {
     private ArrayList<Pieza> piezas;
     private Tablero tablero;
@@ -7,6 +11,12 @@ public class FuerzaBruta {
 
     private boolean solucionEncontrada;
 
+    /**
+     * Constructor de la clase FuerzaBruta.
+     * @param piezas Lista de piezas a colocar en el tablero.
+     * @param tamaño Tamaño del tablero (tamaño x tamaño).
+     * Inicialización de las variables y el tablero.
+     */
     public FuerzaBruta(ArrayList<Pieza> piezas, int tamaño) {
         this.piezas = piezas;
         this.tamaño = tamaño;
@@ -14,6 +24,11 @@ public class FuerzaBruta {
         this.solucionEncontrada = false;
     }
 
+    /**
+     * Método que inicia el proceso de resolución del problema utilizando fuerza bruta.
+     * Mide el tiempo de ejecución y muestra estadísticas al finalizar, las distintas mediciones.
+     * @return true si se encuentra una solución, false en caso contrario.
+     */
     public boolean resolver() {
         long inicio = System.nanoTime();
 
@@ -42,6 +57,11 @@ public class FuerzaBruta {
         return resultado;
     }
 
+    /**
+     * Método recursivo que implementa el algoritmo de backtracking para colocar las piezas en el tablero.
+     * @param pos Posición actual en el tablero (de 0 a tamaño*tamaño - 1).
+     * @return true si se encuentra una solución, false en caso contrario.
+     */
     private boolean backtracking(int pos) {
 
         // Caso base: si se han colocado todas las piezas
