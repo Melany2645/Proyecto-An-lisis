@@ -10,8 +10,8 @@ public class MainFuerzaBruta {
     public static void main(String []args) {
 
         // Parámetros del problema, Prueba con tamaño 3 y valores entre 0 y 9 o 0 y 15
-        int tamaño = 5;
-        int valorMaximo = 9;
+        int tamaño = 10;
+        int valorMaximo = 15;
 
         System.out.println("Iniciando prueba Fuerza Bruta");
         System.out.println("Tamaño del rompecabezas: " + tamaño + "x" + tamaño);
