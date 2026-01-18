@@ -77,7 +77,7 @@ public class FuerzaBruta {
         for (Pieza pieza : piezas) {
             if (!pieza.isUsada()) {
                 tablero.incrementarAlternativas();
-                if (tablero.encaja(fila, columna, pieza)) {
+                if (tablero.encaja(fila, columna, pieza)) { // Poda 
                     tablero.colocarPieza(fila, columna, pieza);
                     if (backtracking(pos + 1)) {
                         return true;
