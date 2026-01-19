@@ -64,16 +64,13 @@ public class FuerzaBruta {
      * @return true si se encuentra una solución, false en caso contrario.
      */
     private boolean backtracking(int pos) {
-
         // Caso base: si se han colocado todas las piezas
         if (pos == tamaño * tamaño) {
             solucionEncontrada = true;
             return true;
         }
-
         int fila = pos / tamaño;
         int columna = pos % tamaño;
-
         for (Pieza pieza : piezas) {
             if (!pieza.isUsada()) {
                 tablero.incrementarAlternativas();
