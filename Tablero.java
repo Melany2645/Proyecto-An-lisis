@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 /*
  * Clase que representa un tablero para colocar piezas.
  * @autor Melany Jirón Díaz
@@ -117,6 +119,41 @@ public class Tablero {
     public long getInstrucciones() {
         instrucciones = comparaciones + asignaciones;
         return instrucciones;
+    }
+
+    // Probar
+    /**
+     * Método para imprimir el rompecabezas desordenado.
+     * Coloca las piezas en orden secuencial para visualización.
+     * @param piezas Lista de piezas a mostrar.
+     */
+    public void imprimirRompecabezasDesordenado(ArrayList<Pieza> piezas) {
+        // Crear una copia del tablero para mostrar el rompecabezas desordenado
+        Pieza[][] tableroTemp = new Pieza[tamaño][tamaño];
+        
+        // Colocar las piezas en orden secuencial
+        int indice = 0;
+        for (int i = 0; i < tamaño && indice < piezas.size(); i++) {
+            for (int j = 0; j < tamaño && indice < piezas.size(); j++) {
+                tableroTemp[i][j] = piezas.get(indice);
+                indice++;
+            }
+        }
+        
+        // Mostrar el tablero
+        for (int i = 0; i < tamaño; i++) {
+            for (int linea = 0; linea < 3; linea++) {
+                for (int j = 0; j < tamaño; j++) {
+                    if (tableroTemp[i][j] != null) {
+                        System.out.print(tableroTemp[i][j].visualizacionLineas()[linea] + " ");
+                    } else {
+                        imprimirVacio(linea);
+                    }
+                }
+                System.out.println();
+            }
+            System.out.println();
+        }
     }
 
     /**
