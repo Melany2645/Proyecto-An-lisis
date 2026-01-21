@@ -1,5 +1,16 @@
 import java.util.ArrayList;
 
+/************************Datos administrativos****************************
+ * Nombre del proyecto: Análisis de Algoritmos - Armado de Rombecabezas
+ * Archivo: MainFuerzaBruta.java
+ * Autor: Melany Jirón 
+ * Empresa: Instituto Tecnológico de Costa Rica
+ * ******************************Descripción*****************************
+ * Clase principal para ejecutar el algoritmo de fuerza bruta en un problema de colocación de piezas en un tablero.
+ * ******************************Versión*********************************
+ * 1.0 | 2026-30-01 | Melany Jirón Díaz
+ ************************************************************************/
+
 /*
  * Clase principal para ejecutar el algoritmo de fuerza bruta en un problema de colocación de piezas en un tablero.
  * @autor Melany Jirón Díaz

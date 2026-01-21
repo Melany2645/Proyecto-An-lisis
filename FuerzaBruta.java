@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-
 /*
  * Clase que implementa el algoritmo de fuerza bruta para resolver un problema de colocación de piezas en un tablero.
  * @autor Melany Jirón Díaz

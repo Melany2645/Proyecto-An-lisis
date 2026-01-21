@@ -36,6 +36,7 @@ public class Tablero {
 
     /**
      * Método para colocar una pieza en el tablero.
+     * Y marca la pieza como usada.
      * @param fila Fila donde se colocará la pieza.
      * @param columna Columna donde se colocará la pieza.
      * @param pieza Pieza a colocar.
@@ -83,7 +84,6 @@ public class Tablero {
                 
             }
         }
-
         // Verificar en sentido horizontal
         if (columna > 0 && tablero[fila][columna - 1] != null) {
             comparaciones++;
