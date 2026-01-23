@@ -194,4 +194,13 @@ public class Tablero {
             System.out.print("--     -- ");
         }
     }
+
+
+    /**
+     * Obtiene la pieza que se encuentra en una posición específica del tablero.
+     * @return La pieza ubicada en esa posición del tablero. 
+     */
+    public Pieza getPieza(int fila, int columna) {
+        return tablero[fila][columna];
+    }
 }
