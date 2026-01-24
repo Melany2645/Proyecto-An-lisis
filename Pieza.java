@@ -1,6 +1,6 @@
 /**
  * Clase que representa una pieza del tablero con valores en sus cuatro lados.
- * @autor Melany Jirón Díaz
+ * @autor Melany Jirón Díaz, Jeremy Montero
  * @version 1.0
  */
 public class Pieza {
@@ -73,5 +73,20 @@ public class Pieza {
         return "Pieza{" + "arriba=" + arriba + ", derecha=" + derecha +
                 ", abajo=" + abajo + ", izquierda=" + izquierda + ", usada=" + usada +
                 '}';
+    }
+
+
+    /**
+     * Crea y retorna una copia exacta de la pieza actual.
+     * @return Una nueva instancia de Pieza con los mismos valores de arriba, abajo,
+     * izquierda y derecha que la pieza original.
+     */
+    public Pieza clonar() {
+    return new Pieza(
+        this.getArriba(),
+        this.getAbajo(),
+        this.getIzquierda(),
+        this.getDerecha()
+        );
     }
 }
