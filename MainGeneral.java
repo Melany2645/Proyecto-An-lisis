@@ -1,27 +1,42 @@
 import java.util.ArrayList;
-import java.util.Scanner;
+//import java.util.Scanner;
 
 public class MainGeneral {
+    
+    /**
+     * Reinicia todas las piezas marcándolas como no usadas.
+     * Ya que los 3 algoritmos utilizan la misma lista de piezas.
+     * @param piezas Lista de piezas a reinicializar.
+     */
+    private static void reinicializarPiezas(ArrayList<Pieza> piezas) {
+        for (Pieza pieza : piezas) {
+            pieza.setUsada(false);
+        }
+    }
 
     public static void main(String[] args) {
 
-        Scanner sc = new Scanner(System.in);
+        //Scanner sc = new Scanner(System.in);
 
         System.out.println("===== Proyecto Análisis de Algoritmos =====");
-        System.out.println("Seleccione el algoritmo a utilizar:");
+        //System.out.println("Seleccione el algoritmo a utilizar:");
         System.out.println("1. Fuerza Bruta");
         System.out.println("2. Avance Rápido");
         System.out.println("3. Algoritmo Genético");
         System.out.print("Opción: ");
-        int opcion = sc.nextInt();
+        //int opcion = sc.nextInt();
 
         System.out.print("\nIngrese el tamaño del tablero (n): ");
-        int tamaño = sc.nextInt();
+        //int tamaño = sc.nextInt();
 
         System.out.print("Ingrese el valor máximo de las piezas: ");
-        int valorMaximo = sc.nextInt();
+        //int valorMaximo = sc.nextInt();
 
         System.out.println();
+
+        // Datos de entrada de prueba
+        int tamaño = 5;
+        int valorMaximo = 9; 
 
         // Generación de piezas
         Piezas generador = new Piezas(tamaño, valorMaximo);
@@ -33,31 +48,33 @@ public class MainGeneral {
         t.imprimirRompecabezasDesordenado(piezas);
         System.out.println();
 
-        switch (opcion) {
+        //switch (opcion) {
 
-            case 1:
+            //case 1:
                 System.out.println("Resolviendo con Fuerza Bruta...\n");
                 FuerzaBruta fb = new FuerzaBruta(piezas, tamaño);
                 fb.resolver();
-                break;
+                //break;
 
-            case 2:
+            //case 2:
                 System.out.println("Resolviendo con Avance Rápido...\n");
+                reinicializarPiezas(piezas);
                 AvanceRapido ar = new AvanceRapido(piezas, tamaño);
                 ar.resolver();
-                break;
+                //break;
 
-            case 3:
+            //case 3:
                 System.out.println("Resolviendo con Algoritmo Genético...\n");
+                reinicializarPiezas(piezas);
                 Genetico g = new Genetico(tamaño, piezas);
                 g.ejecutar();
-                break;
+                //break;
 
 
-            default:
+            //default:
                 System.out.println("Opción no válida.");
-        }
+        //}
 
-        sc.close();
+        //sc.close();
     }
 }

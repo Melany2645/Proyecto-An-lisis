@@ -103,6 +103,13 @@ public class Tablero {
         alternativas++;
     }
 
+    /**
+     * Método para incrementar el contador de podas realizadas.
+     */
+    public void incrementarPodas() {
+        podas++;
+    }
+
     // Getters para los contadores
     public long getComparaciones() {
         return comparaciones;
