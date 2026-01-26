@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * Desde aquí se ejecutan Fuerza Bruta, Avance Rápido o el Algoritmo Genético,
  * garantizando que todos trabajen sobre el mismo conjunto de piezas y bajo
  * las mismas condiciones iniciales.
- * @autor Jeremy Montero
+ * @autor Jeremy Montero y Melany Jirón Díaz
  * @version 1.0
  */
 public class MainGeneral {
@@ -32,7 +32,7 @@ public class MainGeneral {
      */
     public static void main(String[] args) {
 
-        Scanner sc = new Scanner(System.in);
+        //Scanner sc = new Scanner(System.in);
 
         // Menú principal del sistema
         System.out.println("===== Proyecto Análisis de Algoritmos =====");
@@ -67,33 +67,24 @@ public class MainGeneral {
         t.imprimirRompecabezasDesordenado(piezas);
         System.out.println();
 
-        switch (opcion) {
-
             //case 1:
-                System.out.println("Resolviendo con Fuerza Bruta...\n");
-                FuerzaBruta fb = new FuerzaBruta(piezas, tamaño);
-                fb.resolver();
-                //break;
+        System.out.println("Resolviendo con Fuerza Bruta...\n");
+        FuerzaBruta fb = new FuerzaBruta(piezas, tamaño);
+        fb.resolver();
+        //break;
 
             //case 2:
-                System.out.println("Resolviendo con Avance Rápido...\n");
-                reinicializarPiezas(piezas);
-                AvanceRapido ar = new AvanceRapido(piezas, tamaño);
-                ar.resolver();
-                //break;
+        System.out.println("Resolviendo con Avance Rápido...\n");
+        reinicializarPiezas(piezas);
+        AvanceRapido ar = new AvanceRapido(piezas, tamaño);
+        ar.resolver();
+        //break;
 
             //case 3:
-                System.out.println("Resolviendo con Algoritmo Genético...\n");
-                reinicializarPiezas(piezas);
-                Genetico g = new Genetico(tamaño, piezas);
-                g.ejecutar();
-                //break;
-
-
-            default:
-                System.out.println("Opción no válida.");
-        //}
-
-        //sc.close();
+        System.out.println("Resolviendo con Algoritmo Genético...\n");
+        reinicializarPiezas(piezas);
+        Genetico g = new Genetico(tamaño, piezas);
+        g.ejecutar();
+        //break;
     }
 }
