@@ -38,20 +38,29 @@ public class AvanceRapido {
      * @return true si se encuentra una solución, false en caso contrario.
      */
     public boolean solucionAR() {
+        Runtime runtime = Runtime.getRuntime();
+        runtime.gc();
+        long memoriaInicial = runtime.totalMemory() - runtime.freeMemory();
+        
         long inicio = System.nanoTime();
 
         boolean resultado = backtrackingMRV();
 
         long fin = System.nanoTime();
+        
+        long memoriaFinal = runtime.totalMemory() - runtime.freeMemory();
+        long memoriaUsada = memoriaFinal - memoriaInicial;
+        
         double tiempo = (fin - inicio) / 1_000_000_000.0;
 
         System.out.println("====== Heurística MRV (Minimum Remaining Values) ======");
         System.out.println("Solución encontrada: " + resultado);
-        System.out.println("Tiempo: " + String.format("%.3f s", tiempo));
+        System.out.println("Duración: " + String.format("%.3f s", tiempo));
+        System.out.println("Memoria usada: " + (memoriaUsada / 1024) + " KB");
         System.out.println("Alternativas exploradas: " + tablero.getAlternativas());
         System.out.println("Comparaciones: " + tablero.getComparaciones());
         System.out.println("Asignaciones: " + tablero.getAsignaciones());
-        //System.out.println("Podas realizadas: " + tablero.getPodas());
+        System.out.println("Podas realizadas: " + tablero.getPodas());
         System.out.println("Instrucciones ejecutadas: " + tablero.getInstrucciones());
         System.out.println("============================================");
 

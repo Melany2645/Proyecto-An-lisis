@@ -92,6 +92,10 @@ public class Genetico {
      */
     public void ejecutar() {
 
+        Runtime runtime = Runtime.getRuntime();
+        runtime.gc();
+        long memoriaInicial = runtime.totalMemory() - runtime.freeMemory();
+        
         long inicio = System.nanoTime();
 
         // Fitness máximo posible del tablero
@@ -107,16 +111,20 @@ public class Genetico {
             comparaciones++;
             if (mejor.getFitness() == maxFitness) {
                 long fin = System.nanoTime();
+                long memoriaFinal = runtime.totalMemory() - runtime.freeMemory();
+                long memoriaUsada = memoriaFinal - memoriaInicial;
+                
                 double tiempo = (fin - inicio) / 1_000_000_000.0;
 
                 System.out.println("====== Algoritmo Genético ======");
                 System.out.println("Solución perfecta encontrada: true");
                 System.out.println("Generación: " + gen);
                 System.out.println("Fitness: " + mejor.getFitness());
+                System.out.println("Duración: " + String.format("%.3f s", tiempo));
+                System.out.println("Memoria usada: " + (memoriaUsada / 1024) + " KB");
                 System.out.println("Comparaciones: " + getComparaciones());
                 System.out.println("Asignaciones: " + getAsignaciones());
                 System.out.println("Instrucciones: " + getInstrucciones());
-                System.out.printf("Tiempo: %.3f s\n", tiempo);
                 System.out.println("===============================");
                 System.out.println("Tablero solución:");
                 mejor.imprimir();
@@ -153,6 +161,9 @@ public class Genetico {
         }
 
         long fin = System.nanoTime();
+        long memoriaFinal = runtime.totalMemory() - runtime.freeMemory();
+        long memoriaUsada = memoriaFinal - memoriaInicial;
+        
         double tiempo = (fin - inicio) / 1_000_000_000.0;
 
         System.out.println("====== Algoritmo Genético ======");
@@ -160,10 +171,11 @@ public class Genetico {
         System.out.println("Se muestra la mejor solución aproximada.");
         System.out.println("Fitness alcanzado: " + mejorGlobal.getFitness());
         System.out.println("Fitness máximo posible: " + maxFitness);
+        System.out.println("Duración: " + String.format("%.3f s", tiempo));
+        System.out.println("Memoria usada: " + (memoriaUsada / 1024) + " KB");
         System.out.println("Comparaciones: " + getComparaciones());
         System.out.println("Asignaciones: " + getAsignaciones());
         System.out.println("Instrucciones: " + getInstrucciones());
-        System.out.printf("Tiempo: %.3f s\n", tiempo);
         System.out.println("===============================");
         System.out.println("Mejor tablero encontrado:");
         mejorGlobal.imprimir();

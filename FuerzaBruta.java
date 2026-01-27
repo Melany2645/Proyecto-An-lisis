@@ -34,18 +34,25 @@ public class FuerzaBruta {
      * @return true si se encuentra una solución, false en caso contrario.
      */
     public boolean resolver() {
+        Runtime runtime= Runtime.getRuntime();
+        runtime.gc();
+        long MemoriaInicial = runtime.totalMemory() - runtime.freeMemory();
+
         long inicio = System.nanoTime();
 
         boolean resultado = backtracking(0);
 
         long fin = System.nanoTime();
-        long elapsedNanos = fin - inicio;
-        double duracionSeg = elapsedNanos / 1_000_000_000.0; // Duración en segundos
-        double duracionMs = elapsedNanos / 1_000_000.0; // Duración en milisegundos
+        
+        long MemoriaFinal = runtime.totalMemory() - runtime.freeMemory();
+        long memoriaUsada = MemoriaFinal - MemoriaInicial;
+        
+        double tiempo = (fin - inicio) / 1_000_000_000.0; // Tiempo en segundos
 
         System.out.println("====== Fuerza Bruta ======");
         System.out.println("Solución encontrada: " + resultado);
-        System.out.println("Duración: " + String.format("%.3f s (%d ms)", duracionSeg, Math.round(duracionMs)));
+        System.out.println("Duración: " + String.format("%.3f s", tiempo));
+        System.out.println("Memoria usada: " + (memoriaUsada / 1024) + " KB");
         System.out.println("Alternativas exploradas: " + tablero.getAlternativas());
         System.out.println("Comparaciones: " + tablero.getComparaciones());
         System.out.println("Asignaciones: " + tablero.getAsignaciones());

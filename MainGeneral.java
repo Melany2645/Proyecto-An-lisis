@@ -73,10 +73,10 @@ public class MainGeneral {
 
 
         if (tamaño == 3) {
-            System.out.println("Piezas quemadas:");
+            System.out.println("Piezas quemadas en el primer tamaño 3x3");
             piezas = piezasQuemadas;
         } else {
-            System.out.println("Piezas generadas (desordenadas):");
+            System.out.println("Piezas generadas (desordenadas) para los distintos tamaños");
         }
         System.out.println("\n");
 
