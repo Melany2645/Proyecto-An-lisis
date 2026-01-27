@@ -57,10 +57,10 @@ public class AvanceRapido {
         System.out.println("Solución encontrada: " + resultado);
         System.out.println("Duración: " + String.format("%.3f s", tiempo));
         System.out.println("Memoria usada: " + (memoriaUsada / 1024) + " KB");
-        System.out.println("Alternativas exploradas: " + tablero.getAlternativas());
+        //System.out.println("Alternativas exploradas: " + tablero.getAlternativas());
         System.out.println("Comparaciones: " + tablero.getComparaciones());
         System.out.println("Asignaciones: " + tablero.getAsignaciones());
-        System.out.println("Podas realizadas: " + tablero.getPodas());
+        //System.out.println("Podas realizadas: " + tablero.getPodas());
         System.out.println("Instrucciones ejecutadas: " + tablero.getInstrucciones());
         System.out.println("============================================");
 
