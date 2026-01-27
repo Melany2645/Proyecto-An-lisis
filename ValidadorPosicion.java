@@ -1,6 +1,5 @@
 /**
  * Clase auxiliar que valida si una pieza puede colocarse en una posición específica.
- * 
  * @author Melany Jirón Díaz
  * @version 1.0
  */
@@ -27,6 +26,7 @@ public class ValidadorPosicion {
     public boolean encaja(int fila, int columna, Pieza pieza) {
         // Validar con pieza arriba
         if (fila > 0 && tablero.getPieza(fila - 1, columna) != null) {
+            tablero.incrementarComparaciones();
             Pieza piezaArriba = tablero.getPieza(fila - 1, columna);
             if (piezaArriba.getAbajo() != pieza.getArriba()) {
                 return false;
@@ -35,6 +35,7 @@ public class ValidadorPosicion {
         
         // Validar con pieza a la izquierda
         if (columna > 0 && tablero.getPieza(fila, columna - 1) != null) {
+            tablero.incrementarComparaciones();
             Pieza piezaIzquierda = tablero.getPieza(fila, columna - 1);
             if (piezaIzquierda.getDerecha() != pieza.getIzquierda()) {
                 return false;

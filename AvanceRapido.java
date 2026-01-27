@@ -37,10 +37,10 @@ public class AvanceRapido {
      * Mide el tiempo de ejecución y reporta estadísticas detalladas.
      * @return true si se encuentra una solución, false en caso contrario.
      */
-    public boolean resolver() {
+    public boolean solucionAR() {
         long inicio = System.nanoTime();
 
-        boolean resultado = backtracking();
+        boolean resultado = backtrackingMRV();
 
         long fin = System.nanoTime();
         double tiempo = (fin - inicio) / 1_000_000_000.0;
@@ -67,7 +67,7 @@ public class AvanceRapido {
      * Selecciona la posición más restringida (con menos opciones) y prueba colocar piezas en ella.
      * @return true si se logra completar el tablero correctamente, false en caso contrario.
      */
-    private boolean backtracking() {
+    private boolean backtrackingMRV() {
         // Verificar si el tablero está completamente lleno (caso base)
         if (analisis.estaTableroLleno()) {
             return true;
@@ -90,19 +90,19 @@ public class AvanceRapido {
         // Intentar colocar cada pieza disponible en esta posición
         for (Pieza pieza : piezas) {
             if (!pieza.isUsada()) {
-                tablero.incrementarAlternativas();
+                tablero.incrementarAlternativas(); // Alternativas
 
                 // Validar si la pieza encaja
-                if (analisis.encaja(posicion.getFila(), posicion.getColumna(), pieza)) {
+                if (analisis.encaja(posicion.getFila(), posicion.getColumna(), pieza)) { // Comparaciones
                     // Colocar la pieza y continuar recursivamente
-                    tablero.colocarPieza(posicion.getFila(), posicion.getColumna(), pieza);
+                    tablero.colocarPieza(posicion.getFila(), posicion.getColumna(), pieza); // Asignaciones
 
-                    if (backtracking()) {
+                    if (backtrackingMRV()) {
                         return true;
                     }
                     
                     // Backtrack: quitar la pieza
-                    tablero.quitarPieza(posicion.getFila(), posicion.getColumna());
+                    tablero.quitarPieza(posicion.getFila(), posicion.getColumna()); // Asignaciones
                 }
             }
         }

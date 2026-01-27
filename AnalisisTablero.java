@@ -97,7 +97,6 @@ public class AnalisisTablero {
     /**
      * Obtiene todas las posiciones vacías del tablero ordenadas por restricción (MRV).
      * Las posiciones con menos opciones aparecen primero.
-     * 
      * @return ArrayList de PosicionRestringida ordenadas de menor a mayor restricción.
      */
     public ArrayList<PosicionRestringida> obtenerPosicionesOrdenadas() {

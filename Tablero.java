@@ -104,6 +104,13 @@ public class Tablero {
     }
 
     /**
+     * Método para incrementar el contador de comparaciones realizadas.
+     */
+    public void incrementarComparaciones() {
+        comparaciones++;
+    }
+
+    /**
      * Método para incrementar el contador de podas realizadas.
      */
     public void incrementarPodas() {

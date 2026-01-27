@@ -1,13 +1,25 @@
 import java.util.ArrayList;
-//import java.util.Scanner;
+
+/************************Datos administrativos****************************
+ * Nombre del proyecto: Análisis de Algoritmos - Armado de Rombecabezas
+ * Archivo: MainGeneral.java
+ * Autor: Melany Jirón y Jeremy Montero
+ * Empresa: Instituto Tecnológico de Costa Rica
+ * ******************************Descripción*****************************
+ * Clase principal para ejecutar los algoritmos en un problema de colocación de piezas en un tablero.
+ * ******************************Versión*********************************
+ * 1.0 | 2026-30-01 | Melany Jirón Díaz y Jeremy Montero
+ ************************************************************************/
 
 /**
  * Clase principal del proyecto.
  * Funciona como punto único de entrada al sistema y permite al usuario:
- *  - Seleccionar el algoritmo a utilizar.
- *  - Definir el tamaño del tablero.
- *  - Definir el valor máximo de las piezas.
- * Desde aquí se ejecutan Fuerza Bruta, Avance Rápido o el Algoritmo Genético,
+ *  - Poner ver el armado del rompecabezas desordenado.
+ *  - Mediante tres algoritmos para dar la solución al rompecabezas:
+ *    - Fuerza Bruta
+ *    - Avance Rápido (Heurística MRV)
+ *    - Algoritmo Genético
+ * Desde aquí se ejecutan Fuerza Bruta, Avance Rápido y el Algoritmo Genético,
  * garantizando que todos trabajen sobre el mismo conjunto de piezas y bajo
  * las mismas condiciones iniciales.
  * @autor Jeremy Montero y Melany Jirón Díaz
@@ -32,34 +44,41 @@ public class MainGeneral {
      */
     public static void main(String[] args) {
 
-        //Scanner sc = new Scanner(System.in);
-
-        // Menú principal del sistema
         System.out.println("===== Proyecto Análisis de Algoritmos =====");
-        //System.out.println("Seleccione el algoritmo a utilizar:");
+        System.out.println("Resolución de un rompecabezas mediante distintos algoritmos:");
         System.out.println("1. Fuerza Bruta");
         System.out.println("2. Avance Rápido");
         System.out.println("3. Algoritmo Genético");
-        System.out.print("Opción: ");
-        //int opcion = sc.nextInt();
-
-        // Lectura del tamaño del tablero
-        System.out.print("\nIngrese el tamaño del tablero (n): ");
-        //int tamaño = sc.nextInt();
-
-        // Lectura del valor máximo permitido en los lados de las piezas
-        System.out.print("Ingrese el valor máximo de las piezas: ");
-        //int valorMaximo = sc.nextInt();
-
         System.out.println();
 
         // Datos de entrada de prueba
-        int tamaño = 5;
+        int tamaño = 3;
         int valorMaximo = 9; 
 
         // Generación de las piezas asegurando que exista solución válida
         Piezas generador = new Piezas(tamaño, valorMaximo);
         ArrayList<Pieza> piezas = generador.getPiezas();
+
+        // Piezas quemadas, primer tamaño 3x3
+        ArrayList<Pieza> piezasQuemadas = new ArrayList<>();
+        piezasQuemadas.add(new Pieza(3, 1, 2, 4));
+        piezasQuemadas.add(new Pieza(6, 0, 5, 1));
+        piezasQuemadas.add(new Pieza(1, 0, 3, 2));
+        piezasQuemadas.add(new Pieza(2, 8, 6, 0));
+        piezasQuemadas.add(new Pieza(7, 4, 3, 1));
+        piezasQuemadas.add(new Pieza(1, 5, 4, 0));
+        piezasQuemadas.add(new Pieza(4, 2, 7, 5));
+        piezasQuemadas.add(new Pieza(4, 3, 1, 5));
+        piezasQuemadas.add(new Pieza(0, 8, 2, 3));
+
+
+        if (tamaño == 3) {
+            System.out.println("Piezas quemadas:");
+            piezas = piezasQuemadas;
+        } else {
+            System.out.println("Piezas generadas (desordenadas):");
+        }
+        System.out.println("\n");
 
         // Visualización inicial del rompecabezas desordenado
         System.out.println("Rompecabezas desordenado:");
@@ -67,24 +86,18 @@ public class MainGeneral {
         t.imprimirRompecabezasDesordenado(piezas);
         System.out.println();
 
-            //case 1:
         System.out.println("Resolviendo con Fuerza Bruta...\n");
         FuerzaBruta fb = new FuerzaBruta(piezas, tamaño);
         fb.resolver();
-        //break;
 
-            //case 2:
         System.out.println("Resolviendo con Avance Rápido...\n");
         reinicializarPiezas(piezas);
         AvanceRapido ar = new AvanceRapido(piezas, tamaño);
-        ar.resolver();
-        //break;
+        ar.solucionAR();
 
-            //case 3:
         System.out.println("Resolviendo con Algoritmo Genético...\n");
         reinicializarPiezas(piezas);
         Genetico g = new Genetico(tamaño, piezas);
         g.ejecutar();
-        //break;
     }
 }

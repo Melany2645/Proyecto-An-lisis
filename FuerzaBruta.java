@@ -1,6 +1,10 @@
 import java.util.ArrayList;
-/*
+/* 
  * Clase que implementa el algoritmo de fuerza bruta para resolver un problema de colocación de piezas en un tablero.
+ * Utiliza clases auxiliares:
+ * - Tablero: Representa el tablero y maneja la colocación de piezas.
+ * - Pieza: Representa una pieza con sus características.
+ * 
  * @autor Melany Jirón Díaz
  * @version 1.0
  */
