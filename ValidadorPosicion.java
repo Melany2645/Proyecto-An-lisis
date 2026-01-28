@@ -25,18 +25,22 @@ public class ValidadorPosicion {
      */
     public boolean encaja(int fila, int columna, Pieza pieza) {
         // Validar con pieza arriba
+        tablero.incrementarComparaciones();
         if (fila > 0 && tablero.getPieza(fila - 1, columna) != null) {
             tablero.incrementarComparaciones();
             Pieza piezaArriba = tablero.getPieza(fila - 1, columna);
+            tablero.incrementarAsignaciones();
             if (piezaArriba.getAbajo() != pieza.getArriba()) {
                 return false;
             }
         }
         
         // Validar con pieza a la izquierda
+        tablero.incrementarComparaciones();
         if (columna > 0 && tablero.getPieza(fila, columna - 1) != null) {
             tablero.incrementarComparaciones();
             Pieza piezaIzquierda = tablero.getPieza(fila, columna - 1);
+            tablero.incrementarAsignaciones();
             if (piezaIzquierda.getDerecha() != pieza.getIzquierda()) {
                 return false;
             }

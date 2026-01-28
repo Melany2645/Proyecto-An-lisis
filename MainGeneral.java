@@ -44,16 +44,20 @@ public class MainGeneral {
      */
     public static void main(String[] args) {
 
-        System.out.println("===== Proyecto Análisis de Algoritmos =====");
-        System.out.println("Resolución de un rompecabezas mediante distintos algoritmos:");
-        System.out.println("1. Fuerza Bruta");
-        System.out.println("2. Avance Rápido");
-        System.out.println("3. Algoritmo Genético");
-        System.out.println();
-
         // Datos de entrada de prueba
-        int tamaño = 15; // Tamaño del tablero (3x3, 5x5, 10x10, ect.)
-        int valorMaximo = 9; 
+        int tamaño = 10; // Tamaño del tablero (3x3, 5x5, 10x10, ect.)
+        int valorMaximo = 15; 
+
+        System.out.println("===== Proyecto Análisis de Algoritmos =====");
+        System.out.println("Resolución de un rompecabezas mediante distintos algoritmos.");
+        System.out.println(" - Fuerza Bruta");
+        System.out.println(" - Avance Rápido");
+        System.out.println(" - Algoritmo Genético");
+        System.out.println();
+        System.out.println( "Tamaño del rompecabezas: " + tamaño + "x" + tamaño);
+        System.out.println( "Rango de valores: 0 a " + valorMaximo);
+        System.out.println("==================================================");
+        System.out.println();
 
         // Generación de las piezas asegurando que exista solución válida
         Piezas generador = new Piezas(tamaño, valorMaximo);
@@ -105,12 +109,13 @@ public class MainGeneral {
             System.out.println("Resolviendo con Fuerza Bruta...\n");
             FuerzaBruta fb = new FuerzaBruta(piezas, tamaño);
             fb.resolver();
-        }        
-        System.out.println("Resolviendo con Avance Rápido...\n");
-        reinicializarPiezas(piezas);
-        AvanceRapido ar = new AvanceRapido(piezas, tamaño);
-        ar.solucionAR();
-
+        }
+        if (tamaño <= 10) {    
+            System.out.println("Resolviendo con Avance Rápido...\n");
+            reinicializarPiezas(piezas);
+            AvanceRapido ar = new AvanceRapido(piezas, tamaño);
+            ar.solucionAR();
+        }
         System.out.println("Resolviendo con Algoritmo Genético...\n");
         reinicializarPiezas(piezas);
         Genetico g = new Genetico(tamaño, piezas);

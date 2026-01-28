@@ -37,6 +37,7 @@ public class Tablero {
     /**
      * Método para colocar una pieza en el tablero.
      * Y marca la pieza como usada.
+     * Armado de rompecabeza.
      * @param fila Fila donde se colocará la pieza.
      * @param columna Columna donde se colocará la pieza.
      * @param pieza Pieza a colocar.
@@ -51,6 +52,7 @@ public class Tablero {
 
     /**
      * Método para quitar una pieza del tablero.
+     * Armado de rompecabeza.
      * @param fila Fila de la pieza a quitar.
      * @param columna Columna de la pieza a quitar.
      */
@@ -58,6 +60,7 @@ public class Tablero {
         Pieza pieza = tablero[fila][columna];
         asignaciones++;
 
+        comparaciones++;
         if (pieza != null) {
             pieza.setUsada(false);
             asignaciones++;
@@ -68,6 +71,7 @@ public class Tablero {
 
     /**
      * Método para verificar si una pieza encaja en una posición dada del tablero.
+     * Armado de rompecabeza.
      * @param fila Fila donde se quiere colocar la pieza.
      * @param columna Columna donde se quiere colocar la pieza.
      * @param pieza Pieza a verificar.
@@ -75,9 +79,11 @@ public class Tablero {
      */
     public boolean encaja(int fila, int columna, Pieza pieza) {
         // Verificar en sentido vertical
+        comparaciones++;
         if (fila > 0 && tablero[fila - 1][columna] != null) {
             comparaciones++;
             Pieza piezaArriba = tablero[fila - 1][columna];
+            asignaciones++;
             if (piezaArriba.getAbajo() != pieza.getArriba()) {
                 podas++;
                 return false;
@@ -85,13 +91,15 @@ public class Tablero {
             }
         }
         // Verificar en sentido horizontal
+        comparaciones++;
         if (columna > 0 && tablero[fila][columna - 1] != null) {
             comparaciones++;
             Pieza piezaIzquierda = tablero[fila][columna - 1];
-                if (piezaIzquierda.getDerecha() != pieza.getIzquierda()) {
-                    podas++;
-                    return false;
-                }
+            asignaciones++;
+            if (piezaIzquierda.getDerecha() != pieza.getIzquierda()) {
+                podas++;
+                return false;
+            }
         }
         return true;
 
@@ -108,6 +116,13 @@ public class Tablero {
      */
     public void incrementarComparaciones() {
         comparaciones++;
+    }
+
+    /**
+     * Método para incrementar el contador de asignaciones realizadas.
+     */
+    public void incrementarAsignaciones() {
+        asignaciones++;
     }
 
     /**
