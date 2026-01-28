@@ -3,12 +3,14 @@ import java.util.Random;
 
 /**
  * Clase que implementa el Algoritmo Genético para resolver el rompecabezas.
- * Además de buscar una solución óptima, mide métricas empíricas como:
- * comparaciones, asignaciones e instrucciones, al igual que Fuerza Bruta
- * y Avance Rápido, para poder comparar el rendimiento de los tres métodos.
+ * Mide métricas empíricas como:
+ * comparaciones, asignaciones e instrucciones.
+ * 
+ * Además, muestra un único ejemplo completo del proceso genético:
+ * Padre 1, Padre 2 y el Hijo generado.
  * 
  * @autor Jeremy Montero
- * @version 1.0
+ * @version 1.2
  */
 public class Genetico {
 
@@ -29,15 +31,19 @@ public class Genetico {
     private long asignaciones;
     private long instrucciones;
 
+    // Variables para guardar UN solo ejemplo de cruce
+    private Cromosoma ejemploPadre1 = null;
+    private Cromosoma ejemploPadre2 = null;
+    private Cromosoma ejemploHijo = null;
+
     /**
      * Constructor simplificado.
-     * Usa parámetros por defecto para el algoritmo genético.
-     * No se le pide nada al usuario.
+     * Usa parámetros por defecto.
      */
     public Genetico(int tamañoTablero, ArrayList<Pieza> piezasBase) {
         this(
             tamañoTablero,
-            150,     // Tamaño de la población
+            150,     // Tamaño de población
             2000,    // Máximo de generaciones
             0.08,    // Probabilidad de mutación
             piezasBase
@@ -45,14 +51,7 @@ public class Genetico {
     }
 
     /**
-     * Constructor completo del algoritmo genético.
-     * Inicializa parámetros, contadores y genera la población inicial.
-     * 
-     * @param tamañoTablero   Tamaño del tablero (n x n).
-     * @param tamañoPoblacion Tamaño de la población.
-     * @param maxGeneraciones Número máximo de generaciones.
-     * @param probMutacion    Probabilidad de mutación.
-     * @param piezasBase      Lista base de piezas.
+     * Constructor completo.
      */
     public Genetico(int tamañoTablero, int tamañoPoblacion, int maxGeneraciones,
                     double probMutacion, ArrayList<Pieza> piezasBase) {
@@ -63,12 +62,10 @@ public class Genetico {
         this.probMutacion = probMutacion;
         this.random = new Random();
 
-        // Inicialización de contadores empíricos
         this.comparaciones = 0;
         this.asignaciones = 0;
         this.instrucciones = 0;
 
-        // Creación de la población inicial
         this.poblacion = new Poblacion(tamañoPoblacion, tamañoTablero, piezasBase);
     }
 
@@ -86,16 +83,14 @@ public class Genetico {
     }
 
     /**
-     * Ejecuta el algoritmo genético.
-     * Busca una solución perfecta; si no la encuentra, muestra
-     * la mejor solución aproximada alcanzada.
+     * Ejecuta el algoritmo genético completo.
      */
     public void ejecutar() {
 
         Runtime runtime = Runtime.getRuntime();
         runtime.gc();
         long memoriaInicial = runtime.totalMemory() - runtime.freeMemory();
-        
+
         long inicio = System.nanoTime();
 
         // Fitness máximo posible del tablero
@@ -105,15 +100,17 @@ public class Genetico {
 
         for (int gen = 0; gen < maxGeneraciones; gen++) {
 
+            // Ordenar población por fitness
             poblacion.ordenarPorFitness();
             Cromosoma mejor = poblacion.getPoblacion().get(0);
 
             comparaciones++;
+            // Si se encuentra solución perfecta
             if (mejor.getFitness() == maxFitness) {
+
                 long fin = System.nanoTime();
                 long memoriaFinal = runtime.totalMemory() - runtime.freeMemory();
                 long memoriaUsada = memoriaFinal - memoriaInicial;
-                
                 double tiempo = (fin - inicio) / 1_000_000_000.0;
 
                 System.out.println("====== Algoritmo Genético ======");
@@ -128,9 +125,13 @@ public class Genetico {
                 System.out.println("===============================");
                 System.out.println("Tablero solución:");
                 mejor.imprimir();
+
+                imprimirEjemploCruce();
+                imprimirTop3();
                 return;
             }
 
+            // Guardar el mejor global
             comparaciones++;
             if (mejorGlobal == null || mejor.getFitness() > mejorGlobal.getFitness()) {
                 mejorGlobal = mejor;
@@ -139,12 +140,13 @@ public class Genetico {
 
             ArrayList<Cromosoma> nuevaPoblacion = new ArrayList<>();
 
-            // Elitismo
+            // Elitismo: conservar los dos mejores
             nuevaPoblacion.add(poblacion.getPoblacion().get(0));
             asignaciones++;
             nuevaPoblacion.add(poblacion.getPoblacion().get(1));
             asignaciones++;
 
+            // Generar el resto de la población
             while (nuevaPoblacion.size() < tamañoPoblacion) {
 
                 Cromosoma padre1 = seleccionarPadre();
@@ -153,6 +155,13 @@ public class Genetico {
                 Cromosoma hijo = cruzar(padre1, padre2);
                 mutar(hijo);
 
+                // Guardar SOLO el primer cruce como ejemplo
+                if (ejemploHijo == null) {
+                    ejemploPadre1 = padre1;
+                    ejemploPadre2 = padre2;
+                    ejemploHijo = hijo;
+                }
+
                 nuevaPoblacion.add(hijo);
                 asignaciones++;
             }
@@ -160,10 +169,10 @@ public class Genetico {
             poblacion.setPoblacion(nuevaPoblacion);
         }
 
+        // Si no se encontró solución perfecta
         long fin = System.nanoTime();
         long memoriaFinal = runtime.totalMemory() - runtime.freeMemory();
         long memoriaUsada = memoriaFinal - memoriaInicial;
-        
         double tiempo = (fin - inicio) / 1_000_000_000.0;
 
         System.out.println("====== Algoritmo Genético ======");
@@ -179,6 +188,41 @@ public class Genetico {
         System.out.println("===============================");
         System.out.println("Mejor tablero encontrado:");
         mejorGlobal.imprimir();
+
+        imprimirEjemploCruce();
+        imprimirTop3();
+    }
+
+    /**
+     * Imprime un solo ejemplo del cruce genético.
+     */
+    private void imprimirEjemploCruce() {
+        if (ejemploHijo != null) {
+            System.out.println("\n====== Ejemplo de Cruce Genético ======");
+            System.out.println("Padre 1:");
+            ejemploPadre1.imprimir();
+
+            System.out.println("Padre 2:");
+            ejemploPadre2.imprimir();
+
+            System.out.println("Hijo generado:");
+            ejemploHijo.imprimir();
+            System.out.println("======================================");
+        }
+    }
+
+    /**
+     * Imprime los 3 mejores cromosomas finales.
+     */
+    private void imprimirTop3() {
+        poblacion.ordenarPorFitness();
+
+        System.out.println("\n--- Top 3 mejores individuos finales ---");
+        for (int i = 0; i < 3 && i < poblacion.getPoblacion().size(); i++) {
+            Cromosoma c = poblacion.getPoblacion().get(i);
+            System.out.println("Individuo " + (i + 1) + " -> Fitness: " + c.getFitness());
+        }
+        System.out.println("---------------------------------------");
     }
 
     /**
