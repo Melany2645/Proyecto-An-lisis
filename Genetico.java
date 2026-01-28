@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Random;
 
 /**
@@ -17,7 +19,8 @@ public class Genetico {
 
     // Parámetros del problema
     private int tamañoTablero;
-    private int tamañoPoblacion;
+    private int poblacionInicial;
+    private int hijosGenerados;
     private int maxGeneraciones;
     private double probMutacion;
 
@@ -28,32 +31,51 @@ public class Genetico {
     private long comparaciones;
     private long asignaciones;
     private long instrucciones;
-
-    // Para mostrar padres/hijos/mutación solo una vez
+    
+    // Para mostrar padres/hijos solo una vez
     private boolean yaMostroProceso = false;
+    private int contadorHijosMostrados = 0;
 
     /**
      * Constructor simplificado.
-     * Usa parámetros por defecto para el algoritmo genético.
+     * Calcula la población según el tamaño del tablero.
      */
     public Genetico(int tamañoTablero, ArrayList<Pieza> piezasBase) {
+        int poblacionInicial = calcularPoblacionInicial(tamañoTablero);
         this(
             tamañoTablero,
-            150,     // Tamaño de población
-            2000,    // Máximo de generaciones
-            0.08,    // Probabilidad de mutación
+            poblacionInicial,  // Población según tamaño
+            10,                 // Máximo de generaciones
+            0.75,               // Probabilidad de mutación (aumentada para mejor visualización)
             piezasBase
         );
+    }
+    
+    /**
+     * Calcula la población inicial según el tamaño del tablero.
+     */
+    private static int calcularPoblacionInicial(int tamaño) {
+        switch(tamaño) {
+            case 3:  return 3;
+            case 5:  return 5;
+            case 10: return 10;
+            case 15: return 15;
+            case 30: return 30;
+            case 60: return 30;
+            case 100: return 30;
+            default: return Math.min(tamaño * tamaño, 100);
+        }
     }
 
     /**
      * Constructor completo.
      */
-    public Genetico(int tamañoTablero, int tamañoPoblacion, int maxGeneraciones,
+    public Genetico(int tamañoTablero, int poblacionInicial, int maxGeneraciones,
                     double probMutacion, ArrayList<Pieza> piezasBase) {
 
         this.tamañoTablero = tamañoTablero;
-        this.tamañoPoblacion = tamañoPoblacion;
+        this.poblacionInicial = poblacionInicial;
+        this.hijosGenerados = calcularHijos(tamañoTablero);
         this.maxGeneraciones = maxGeneraciones;
         this.probMutacion = probMutacion;
         this.random = new Random();
@@ -62,7 +84,23 @@ public class Genetico {
         this.asignaciones = 0;
         this.instrucciones = 0;
 
-        this.poblacion = new Poblacion(tamañoPoblacion, tamañoTablero, piezasBase);
+        this.poblacion = new Poblacion(poblacionInicial, tamañoTablero, piezasBase);
+    }
+    
+    /**
+     * Calcula la cantidad de hijos a generar según el tamaño.
+     */
+    private static int calcularHijos(int tamaño) {
+        switch(tamaño) {
+            case 3:  return 6;
+            case 5:  return 10;
+            case 10: return 20;
+            case 15: return 30;
+            case 30: return 60;
+            case 60: return 60;
+            case 100: return 60;
+            default: return Math.min(tamaño * tamaño * 2, 200);
+        }
     }
 
     public long getComparaciones() {
@@ -121,34 +159,33 @@ public class Genetico {
             nuevaPoblacion.add(poblacion.getPoblacion().get(1));
             asignaciones++;
 
-            // Generar el resto de la población
-            while (nuevaPoblacion.size() < tamañoPoblacion) {
+            // Detectar si hay cromosomas duplicados en la población actual
+            boolean hayDuplicados = detectarDuplicados(poblacion.getPoblacion());
+
+            // Generar el resto de la población (hijos)
+            int hijosAGenerar = hijosGenerados;
+            int contadorHijos = 0;
+            int idIndividuo = 1;
+            while (nuevaPoblacion.size() < poblacionInicial + hijosAGenerar) {
 
                 Cromosoma padre1 = seleccionarPadre();
                 Cromosoma padre2 = seleccionarPadre();
 
                 Cromosoma hijo = cruzar(padre1, padre2);
 
-                // Mostrar padres e hijo solo una vez
-                if (!yaMostroProceso) {
-                    System.out.println("\n======= DEMOSTRACIÓN DEL PROCESO GENÉTICO =======");
-                    System.out.println("PADRE 1:");
-                    padre1.imprimir();
-                    System.out.println("PADRE 2:");
-                    padre2.imprimir();
-                    System.out.println("HIJO (después del cruce):");
-                    hijo.imprimir();
-
-                    yaMostroProceso = true;
+                // Solo aplicar mutación si hay poblaciones duplicadas
+                if (hayDuplicados) {
+                    mutar(hijo, idIndividuo);
+                    idIndividuo++;
                 }
-
-                mutar(hijo);
 
                 nuevaPoblacion.add(hijo);
                 asignaciones++;
             }
 
-            poblacion.setPoblacion(nuevaPoblacion);
+            // Seleccionar los mejores candidatos de la nueva población
+            // para convertirse en la población de la siguiente generación
+            poblacion.setPoblacion(seleccionarMejores(nuevaPoblacion, poblacionInicial));
         }
 
         // No se encontró solución perfecta
@@ -245,31 +282,117 @@ public class Genetico {
     }
 
     /**
-     * Cruce por filas.
+     * Cruce válido: PMX (Partially Mapped Crossover) adaptado para matrices 2D.
+     * Garantiza que no hay piezas duplicadas ni faltantes.
+     * Muestra puntuaciones de padres e hijo.
      */
     private Cromosoma cruzar(Cromosoma p1, Cromosoma p2) {
-
         Pieza[][] genes = new Pieza[tamañoTablero][tamañoTablero];
-        int puntoCorte = random.nextInt(tamañoTablero);
-
-        for (int i = 0; i < tamañoTablero; i++) {
-            for (int j = 0; j < tamañoTablero; j++) {
-                if (i < puntoCorte) {
-                    genes[i][j] = p1.getGenes()[i][j].clonar();
-                } else {
-                    genes[i][j] = p2.getGenes()[i][j].clonar();
+        boolean[][] usado = new boolean[tamañoTablero][tamañoTablero];
+        
+        // Convertir matrices 2D a arrays 1D para facilitar el cruce
+        Pieza[] arr1 = matrizA1D(p1.getGenes());
+        Pieza[] arr2 = matrizA1D(p2.getGenes());
+        Pieza[] hijo = new Pieza[arr1.length];
+        
+        // Seleccionar dos puntos de corte aleatorios
+        int punto1 = random.nextInt(arr1.length);
+        int punto2 = random.nextInt(arr1.length);
+        if (punto1 > punto2) {
+            int temp = punto1;
+            punto1 = punto2;
+            punto2 = temp;
+        }
+        
+        // Copiar segmento del padre 1
+        boolean[] enSegmento = new boolean[arr1.length];
+        for (int i = punto1; i < punto2; i++) {
+            hijo[i] = arr1[i].clonar();
+            enSegmento[arr1[i].hashCode() % arr1.length] = true;
+            asignaciones++;
+        }
+        
+        // Llenar con piezas del padre 2 que no estén duplicadas
+        int posicion = 0;
+        for (int i = 0; i < arr2.length; i++) {
+            comparaciones++;
+            if (posicion >= punto1 && posicion < punto2) {
+                posicion++;
+            }
+            
+            // Verificar que la pieza no esté ya en el hijo
+            boolean existe = false;
+            for (int j = punto1; j < punto2; j++) {
+                comparaciones++;
+                if (hijo[j] != null && hijo[j].hashCode() == arr2[i].hashCode()) {
+                    existe = true;
+                    break;
                 }
+            }
+            
+            if (!existe && posicion < arr2.length) {
+                hijo[posicion] = arr2[i].clonar();
+                posicion++;
                 asignaciones++;
             }
         }
-        return new Cromosoma(genes);
+        
+        // Convertir array 1D de vuelta a matriz 2D
+        int index = 0;
+        for (int i = 0; i < tamañoTablero; i++) {
+            for (int j = 0; j < tamañoTablero; j++) {
+                genes[i][j] = hijo[index++];
+                asignaciones++;
+            }
+        }
+        
+        Cromosoma hijoGenerado = new Cromosoma(genes);
+        
+        // Mostrar información del cruce (dos hijos como demostración)
+        if (!yaMostroProceso) {
+            System.out.println("\n======= DEMOSTRACIÓN DEL PROCESO GENÉTICO =======");
+        }
+        
+        if (contadorHijosMostrados < 2) {
+            contadorHijosMostrados++;
+            System.out.println("\n--- HIJO #" + contadorHijosMostrados + " ---");
+            System.out.println("PADRE 1 (Fitness: " + p1.getFitness() + "):");
+            p1.imprimir();
+            System.out.println("\nPADRE 2 (Fitness: " + p2.getFitness() + "):");
+            p2.imprimir();
+            System.out.println("\nHIJO #" + contadorHijosMostrados + " DESPUÉS DEL CRUCE (Fitness: " + hijoGenerado.getFitness() + "):");
+            hijoGenerado.imprimir();
+            
+            if (contadorHijosMostrados == 2) {
+                System.out.println("===========================================");
+                yaMostroProceso = true;
+            }
+        }
+        
+        return hijoGenerado;
+    }
+    
+    /**
+     * Convierte una matriz 2D a un array 1D.
+     */
+    private Pieza[] matrizA1D(Pieza[][] matriz) {
+        Pieza[] array = new Pieza[tamañoTablero * tamañoTablero];
+        int index = 0;
+        for (int i = 0; i < tamañoTablero; i++) {
+            for (int j = 0; j < tamañoTablero; j++) {
+                array[index++] = matriz[i][j];
+            }
+        }
+        return array;
     }
 
     /**
      * Mutación: intercambio de dos piezas.
-     * Se imprime solo una vez para mostrar el proceso.
+     * Solo acepta la mutación si el fitness mejora o se mantiene igual.
+     * Si el fitness empeora, descarta el cambio.
+     * Muestra todas las mutaciones intentadas con el ID del individuo y las piezas.
      */
-    private void mutar(Cromosoma cromosoma) {
+    private void mutar(Cromosoma cromosoma, int idIndividuo) {
 
         comparaciones++;
         if (random.nextDouble() < probMutacion) {
@@ -279,11 +402,19 @@ public class Genetico {
             int f2 = random.nextInt(tamañoTablero);
             int c2 = random.nextInt(tamañoTablero);
 
-            if (!yaMostroProceso) {
-                System.out.println("\n[MUTACIÓN APLICADA]");
-                System.out.println("Intercambio entre (" + f1 + "," + c1 + ") y (" + f2 + "," + c2 + ")");
-            }
+            int fitnessAntes = cromosoma.getFitness();
 
+            // Guardar las piezas originales para restaurar si es necesario
+            Pieza original1 = cromosoma.getGenes()[f1][c1];
+            Pieza original2 = cromosoma.getGenes()[f2][c2];
+            
+            // Guardar valores de las piezas para mostrar
+            String pieza1Info = original1.getArriba() + "-" + original1.getDerecha() + "-" + 
+                               original1.getAbajo() + "-" + original1.getIzquierda();
+            String pieza2Info = original2.getArriba() + "-" + original2.getDerecha() + "-" + 
+                               original2.getAbajo() + "-" + original2.getIzquierda();
+
+            // Realizar el intercambio
             Pieza temp = cromosoma.getGenes()[f1][c1];
             asignaciones++;
 
@@ -293,12 +424,99 @@ public class Genetico {
             cromosoma.getGenes()[f2][c2] = temp;
             asignaciones++;
 
-            if (!yaMostroProceso) {
-                System.out.println("HIJO DESPUÉS DE LA MUTACIÓN:");
-                cromosoma.imprimir();
-                System.out.println("===========================================");
-                yaMostroProceso = true; // ya no vuelve a imprimir nunca más
+            // Recalcular fitness después de la mutación
+            cromosoma.calcularFitness();
+            asignaciones++;
+
+            int fitnessDespues = cromosoma.getFitness();
+
+            // Mostrar información de la mutación con ID del individuo y piezas
+            System.out.println("\n[MUTACIÓN INTENTADA - INDIVIDUO #" + idIndividuo + "]");
+            System.out.println("  Posiciones: (" + f1 + "," + c1 + ") <-> (" + f2 + "," + c2 + ")");
+            System.out.println("  Piezas: [" + pieza1Info + "] <-> [" + pieza2Info + "]");
+            System.out.println("  Fitness ANTES: " + fitnessAntes + " | Fitness DESPUÉS: " + fitnessDespues);
+
+            // Si el fitness empeora, descartar el cambio
+            if (fitnessDespues < fitnessAntes) {
+                cromosoma.getGenes()[f1][c1] = original1;
+                asignaciones++;
+                cromosoma.getGenes()[f2][c2] = original2;
+                asignaciones++;
+                cromosoma.calcularFitness();
+                asignaciones++;
+                System.out.println("  No mejora ");
+            } else if (fitnessDespues > fitnessAntes) {
+                System.out.println("  Si mejora");
+            } else {
+                System.out.println("  No hay cambios");
             }
         }
+    }
+    
+    /**
+     * Detecta si hay cromosomas duplicados en la población.
+     * Dos cromosomas son iguales si tienen el mismo fitness y la misma configuración.
+     */
+    private boolean detectarDuplicados(ArrayList<Cromosoma> poblacion) {
+        for (int i = 0; i < poblacion.size(); i++) {
+            for (int j = i + 1; j < poblacion.size(); j++) {
+                comparaciones++;
+                if (sonIguales(poblacion.get(i), poblacion.get(j))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Verifica si dos cromosomas son idénticos.
+     */
+    private boolean sonIguales(Cromosoma c1, Cromosoma c2) {
+        Pieza[][] genes1 = c1.getGenes();
+        Pieza[][] genes2 = c2.getGenes();
+        
+        comparaciones++;
+        if (c1.getFitness() != c2.getFitness()) {
+            return false;
+        }
+        
+        for (int i = 0; i < tamañoTablero; i++) {
+            for (int j = 0; j < tamañoTablero; j++) {
+                comparaciones++;
+                if (genes1[i][j].getArriba() != genes2[i][j].getArriba() ||
+                    genes1[i][j].getDerecha() != genes2[i][j].getDerecha() ||
+                    genes1[i][j].getAbajo() != genes2[i][j].getAbajo() ||
+                    genes1[i][j].getIzquierda() != genes2[i][j].getIzquierda()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * Selecciona los N mejores cromosomas de una población.
+     * Ordena por fitness y retorna los mejores N individuos.
+     */
+    private ArrayList<Cromosoma> seleccionarMejores(ArrayList<Cromosoma> poblacion, int cantidad) {
+        // Ordenar por fitness descendente
+        ArrayList<Cromosoma> ordenada = new ArrayList<>(poblacion);
+        Collections.sort(ordenada, new Comparator<Cromosoma>() {
+            @Override
+            public int compare(Cromosoma c1, Cromosoma c2) {
+                comparaciones++;
+                return Integer.compare(c2.getFitness(), c1.getFitness());
+            }
+        });
+        
+        // Retornar solo los mejores N
+        ArrayList<Cromosoma> mejores = new ArrayList<>();
+        for (int i = 0; i < cantidad && i < ordenada.size(); i++) {
+            mejores.add(ordenada.get(i));
+            asignaciones++;
+        }
+        
+        return mejores;
     }
 }

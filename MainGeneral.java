@@ -46,7 +46,7 @@ public class MainGeneral {
 
         // Datos de entrada de prueba
         int tamaño = 5; // Tamaño del tablero (3x3, 5x5, 10x10, ect.)
-        int valorMaximo = 15; 
+        int valorMaximo = 9; 
 
         System.out.println("===== Proyecto Análisis de Algoritmos =====");
         System.out.println("Resolución de un rompecabezas mediante distintos algoritmos.");
