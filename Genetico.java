@@ -3,12 +3,10 @@ import java.util.Random;
 
 /**
  * Clase que implementa el Algoritmo Genético para resolver el rompecabezas.
- * Mide métricas empíricas como:
+ * Incluye impresión de padres, hijo y mutación UNA sola vez para mostrar el proceso,
+ * además de métricas empíricas:
  * comparaciones, asignaciones e instrucciones.
- * 
- * Además, muestra un único ejemplo completo del proceso genético:
- * Padre 1, Padre 2 y el Hijo generado.
- * 
+ *
  * @autor Jeremy Montero
  * @version 1.2
  */
@@ -31,14 +29,12 @@ public class Genetico {
     private long asignaciones;
     private long instrucciones;
 
-    // Variables para guardar UN solo ejemplo de cruce
-    private Cromosoma ejemploPadre1 = null;
-    private Cromosoma ejemploPadre2 = null;
-    private Cromosoma ejemploHijo = null;
+    // Para mostrar padres/hijos/mutación solo una vez
+    private boolean yaMostroProceso = false;
 
     /**
      * Constructor simplificado.
-     * Usa parámetros por defecto.
+     * Usa parámetros por defecto para el algoritmo genético.
      */
     public Genetico(int tamañoTablero, ArrayList<Pieza> piezasBase) {
         this(
@@ -100,38 +96,17 @@ public class Genetico {
 
         for (int gen = 0; gen < maxGeneraciones; gen++) {
 
-            // Ordenar población por fitness
             poblacion.ordenarPorFitness();
             Cromosoma mejor = poblacion.getPoblacion().get(0);
 
             comparaciones++;
-            // Si se encuentra solución perfecta
             if (mejor.getFitness() == maxFitness) {
 
                 long fin = System.nanoTime();
-                long memoriaFinal = runtime.totalMemory() - runtime.freeMemory();
-                long memoriaUsada = memoriaFinal - memoriaInicial;
-                double tiempo = (fin - inicio) / 1_000_000_000.0;
-
-                System.out.println("====== Algoritmo Genético ======");
-                System.out.println("Solución perfecta encontrada: true");
-                System.out.println("Generación: " + gen);
-                System.out.println("Fitness: " + mejor.getFitness());
-                System.out.println("Duración: " + String.format("%.3f s", tiempo));
-                System.out.println("Memoria usada: " + (memoriaUsada / 1024) + " KB");
-                System.out.println("Comparaciones: " + getComparaciones());
-                System.out.println("Asignaciones: " + getAsignaciones());
-                System.out.println("Instrucciones: " + getInstrucciones());
-                System.out.println("===============================");
-                System.out.println("Tablero solución:");
-                mejor.imprimir();
-
-                imprimirEjemploCruce();
-                imprimirTop3();
+                imprimirResultados(gen, mejor, true, inicio, memoriaInicial, runtime);
                 return;
             }
 
-            // Guardar el mejor global
             comparaciones++;
             if (mejorGlobal == null || mejor.getFitness() > mejorGlobal.getFitness()) {
                 mejorGlobal = mejor;
@@ -153,14 +128,21 @@ public class Genetico {
                 Cromosoma padre2 = seleccionarPadre();
 
                 Cromosoma hijo = cruzar(padre1, padre2);
-                mutar(hijo);
 
-                // Guardar SOLO el primer cruce como ejemplo
-                if (ejemploHijo == null) {
-                    ejemploPadre1 = padre1;
-                    ejemploPadre2 = padre2;
-                    ejemploHijo = hijo;
+                // Mostrar padres e hijo solo una vez
+                if (!yaMostroProceso) {
+                    System.out.println("\n======= DEMOSTRACIÓN DEL PROCESO GENÉTICO =======");
+                    System.out.println("PADRE 1:");
+                    padre1.imprimir();
+                    System.out.println("PADRE 2:");
+                    padre2.imprimir();
+                    System.out.println("HIJO (después del cruce):");
+                    hijo.imprimir();
+
+                    yaMostroProceso = true;
                 }
+
+                mutar(hijo);
 
                 nuevaPoblacion.add(hijo);
                 asignaciones++;
@@ -169,7 +151,44 @@ public class Genetico {
             poblacion.setPoblacion(nuevaPoblacion);
         }
 
-        // Si no se encontró solución perfecta
+        // No se encontró solución perfecta
+        long fin = System.nanoTime();
+        imprimirResultadosFinales(mejorGlobal, inicio, memoriaInicial, runtime);
+    }
+
+    /**
+     * Imprime resultados cuando hay solución perfecta.
+     */
+    private void imprimirResultados(int gen, Cromosoma mejor, boolean perfecta,
+                                    long inicio, long memoriaInicial, Runtime runtime) {
+
+        long fin = System.nanoTime();
+        long memoriaFinal = runtime.totalMemory() - runtime.freeMemory();
+        long memoriaUsada = memoriaFinal - memoriaInicial;
+        double tiempo = (fin - inicio) / 1_000_000_000.0;
+
+        System.out.println("====== Algoritmo Genético ======");
+        System.out.println("Solución perfecta encontrada: " + perfecta);
+        System.out.println("Generación: " + gen);
+        System.out.println("Fitness: " + mejor.getFitness());
+        System.out.println("Duración: " + String.format("%.3f s", tiempo));
+        System.out.println("Memoria usada: " + (memoriaUsada / 1024) + " KB");
+        System.out.println("Comparaciones: " + getComparaciones());
+        System.out.println("Asignaciones: " + getAsignaciones());
+        System.out.println("Instrucciones: " + getInstrucciones());
+        System.out.println("===============================");
+        System.out.println("Tablero solución:");
+        mejor.imprimir();
+
+        imprimirTop3();
+    }
+
+    /**
+     * Imprime resultados finales si no se encontró solución perfecta.
+     */
+    private void imprimirResultadosFinales(Cromosoma mejorGlobal,
+                                           long inicio, long memoriaInicial, Runtime runtime) {
+
         long fin = System.nanoTime();
         long memoriaFinal = runtime.totalMemory() - runtime.freeMemory();
         long memoriaUsada = memoriaFinal - memoriaInicial;
@@ -177,9 +196,8 @@ public class Genetico {
 
         System.out.println("====== Algoritmo Genético ======");
         System.out.println("No se encontró solución perfecta.");
-        System.out.println("Se muestra la mejor solución aproximada.");
+        System.out.println("Se muestra la mejor aproximación.");
         System.out.println("Fitness alcanzado: " + mejorGlobal.getFitness());
-        System.out.println("Fitness máximo posible: " + maxFitness);
         System.out.println("Duración: " + String.format("%.3f s", tiempo));
         System.out.println("Memoria usada: " + (memoriaUsada / 1024) + " KB");
         System.out.println("Comparaciones: " + getComparaciones());
@@ -189,26 +207,7 @@ public class Genetico {
         System.out.println("Mejor tablero encontrado:");
         mejorGlobal.imprimir();
 
-        imprimirEjemploCruce();
         imprimirTop3();
-    }
-
-    /**
-     * Imprime un solo ejemplo del cruce genético.
-     */
-    private void imprimirEjemploCruce() {
-        if (ejemploHijo != null) {
-            System.out.println("\n====== Ejemplo de Cruce Genético ======");
-            System.out.println("Padre 1:");
-            ejemploPadre1.imprimir();
-
-            System.out.println("Padre 2:");
-            ejemploPadre2.imprimir();
-
-            System.out.println("Hijo generado:");
-            ejemploHijo.imprimir();
-            System.out.println("======================================");
-        }
     }
 
     /**
@@ -268,6 +267,7 @@ public class Genetico {
 
     /**
      * Mutación: intercambio de dos piezas.
+     * Se imprime solo una vez para mostrar el proceso.
      */
     private void mutar(Cromosoma cromosoma) {
 
@@ -279,6 +279,11 @@ public class Genetico {
             int f2 = random.nextInt(tamañoTablero);
             int c2 = random.nextInt(tamañoTablero);
 
+            if (!yaMostroProceso) {
+                System.out.println("\n[MUTACIÓN APLICADA]");
+                System.out.println("Intercambio entre (" + f1 + "," + c1 + ") y (" + f2 + "," + c2 + ")");
+            }
+
             Pieza temp = cromosoma.getGenes()[f1][c1];
             asignaciones++;
 
@@ -287,6 +292,13 @@ public class Genetico {
 
             cromosoma.getGenes()[f2][c2] = temp;
             asignaciones++;
+
+            if (!yaMostroProceso) {
+                System.out.println("HIJO DESPUÉS DE LA MUTACIÓN:");
+                cromosoma.imprimir();
+                System.out.println("===========================================");
+                yaMostroProceso = true; // ya no vuelve a imprimir nunca más
+            }
         }
     }
 }
