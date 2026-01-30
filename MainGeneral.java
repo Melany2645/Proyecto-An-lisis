@@ -45,8 +45,8 @@ public class MainGeneral {
     public static void main(String[] args) {
 
         // Datos de entrada de prueba
-        int tamaño = 100; // Tamaño del tablero (3x3, 5x5, 10x10, ect.)
-        int valorMaximo = 9; 
+        int tamaño = 3; // Tamaño del tablero (3x3, 5x5, 10x10, ect.)
+        int valorMaximo = 15; 
 
         System.out.println("===== Proyecto Análisis de Algoritmos =====");
         System.out.println("Resolución de un rompecabezas mediante distintos algoritmos.");
