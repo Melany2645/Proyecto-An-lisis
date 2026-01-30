@@ -44,25 +44,29 @@ public class MainGeneral {
      */
     public static void main(String[] args) {
 
-        // Datos de entrada de prueba
-        int tamaño = 3; // Tamaño del tablero (3x3, 5x5, 10x10, ect.)
-        int valorMaximo = 15; 
+        int listaTamañosEntrada [] = {3, 5, 10, 15, 30};
+        int listaRangosEntrada [] = {9, 15};
 
-        System.out.println("===== Proyecto Análisis de Algoritmos =====");
-        System.out.println("Resolución de un rompecabezas mediante distintos algoritmos.");
-        System.out.println(" - Fuerza Bruta");
-        System.out.println(" - Avance Rápido");
-        System.out.println(" - Algoritmo Genético");
-        System.out.println();
-        System.out.println( "Tamaño del rompecabezas: " + tamaño + "x" + tamaño);
-        System.out.println( "Rango de valores: 0 a " + valorMaximo);
-        System.out.println("==================================================");
-        System.out.println();
+        for (int valorMaximo : listaRangosEntrada) {
+            for (int tamañoEntrada : listaTamañosEntrada) {
+
+                // Datos de entrada de prueba
+                int tamaño = tamañoEntrada; // Tamaño del tablero (3x3, 5x5, 10x10, ect.) 
+
+            System.out.println("===== Proyecto Análisis de Algoritmos =====");
+            System.out.println("Resolución de un rompecabezas mediante distintos algoritmos.");
+            System.out.println(" - Fuerza Bruta");
+            System.out.println(" - Avance Rápido");
+            System.out.println(" - Algoritmo Genético");
+            System.out.println();
+            System.out.println( "Tamaño del rompecabezas: " + tamaño + "x" + tamaño);
+            System.out.println( "Rango de valores: 0 a " + valorMaximo);
+            System.out.println("==================================================");
+            System.out.println();
 
         // Generación de las piezas asegurando que exista solución válida
         Piezas generador = new Piezas(tamaño, valorMaximo);
         ArrayList<Pieza> piezas = generador.getPiezas();
-
         // Piezas quemadas, primer tamaño 3x3, rango de 0...9
         ArrayList<Pieza> piezasQuemadas09 = new ArrayList<>();
         piezasQuemadas09.add(new Pieza(3, 1, 2, 4));
@@ -87,38 +91,42 @@ public class MainGeneral {
         piezasQuemadas015.add(new Pieza(7, 6, 3, 2));
         piezasQuemadas015.add(new Pieza(9, 10, 7, 6));
 
+       
 
-        if (tamaño == 3 & valorMaximo == 9) {
-            System.out.println("Piezas quemadas en el primer tamaño 3x3, rango 0...9");
-            piezas = piezasQuemadas09;
-        } else if (tamaño == 3 & valorMaximo == 15) {
-            System.out.println("Piezas quemadas en el primer tamaño 3x3, rango 0...15");
-            piezas = piezasQuemadas015;
-        } else {
-            System.out.println("Piezas generadas (desordenadas) para los distintos tamaños");
-        }
-        System.out.println("\n");
+           
 
-        // Visualización inicial del rompecabezas desordenado
-        System.out.println("Rompecabezas desordenado:");
-        Tablero t = new Tablero(tamaño);
-        t.imprimirRompecabezasDesordenado(piezas);
-        System.out.println();
+            if (tamaño == 3 & valorMaximo == 9) {
+                System.out.println("Piezas quemadas en el primer tamaño 3x3, rango 0...9");
+                piezas = piezasQuemadas09;
+            } else if (tamaño == 3 & valorMaximo == 15) {
+                System.out.println("Piezas quemadas en el primer tamaño 3x3, rango 0...15");
+                piezas = piezasQuemadas015;
+            } else {
+                System.out.println("Piezas generadas (desordenadas) para los distintos tamaños");
+            }
+            System.out.println("\n");
+            // Visualización inicial del rompecabezas desordenado
+            System.out.println("Rompecabezas desordenado:");
+            Tablero t = new Tablero(tamaño);
+            t.imprimirRompecabezasDesordenado(piezas);
+            System.out.println();
 
-        if (tamaño <= 5) {
-            System.out.println("Resolviendo con Fuerza Bruta...\n");
-            FuerzaBruta fb = new FuerzaBruta(piezas, tamaño);
-            fb.resolver();
-        }
-        if (tamaño <= 5) {    
-            System.out.println("Resolviendo con Avance Rápido...\n");
+            if (tamaño <= 5) {
+                System.out.println("Resolviendo con Fuerza Bruta...\n");
+                FuerzaBruta fb = new FuerzaBruta(piezas, tamaño);
+                fb.resolver();
+            }
+            if (tamaño <= 5) {    
+                System.out.println("Resolviendo con Avance Rápido...\n");
+                reinicializarPiezas(piezas);
+                AvanceRapido ar = new AvanceRapido(piezas, tamaño);
+                ar.solucionAR();
+            }
+            System.out.println("Resolviendo con Algoritmo Genético...\n");
             reinicializarPiezas(piezas);
-            AvanceRapido ar = new AvanceRapido(piezas, tamaño);
-            ar.solucionAR();
+            Genetico g = new Genetico(tamaño, piezas);
+            g.ejecutar();
+            }
         }
-        System.out.println("Resolviendo con Algoritmo Genético...\n");
-        reinicializarPiezas(piezas);
-        Genetico g = new Genetico(tamaño, piezas);
-        g.ejecutar();
     }
 }
