@@ -8,6 +8,9 @@ import java.util.Random;
  * Incluye impresión de padres, hijo y mutación UNA sola vez para mostrar el proceso,
  * además de métricas empíricas:
  * comparaciones, asignaciones e instrucciones.
+ * Clases auxiliares utilizadas:
+ * - Poblacion: Maneja la población de cromosomas.
+ * - Cromosoma: Representa un individuo con su configuración de piezas y fitness.
  *
  * @autor Jeremy Montero
  * @version 1.2
@@ -37,8 +40,10 @@ public class Genetico {
     private int contadorHijosMostrados = 0;
 
     /**
-     * Constructor simplificado.
+     * Constructor.
      * Calcula la población según el tamaño del tablero.
+     * @param tamañoTablero Tamaño del tablero (tamaño x tamaño).
+     * @param piezasBase Lista de piezas base para crear la población inicial.
      */
     public Genetico(int tamañoTablero, ArrayList<Pieza> piezasBase) {
         int poblacionInicial = calcularPoblacionInicial(tamañoTablero);
@@ -46,13 +51,15 @@ public class Genetico {
             tamañoTablero,
             poblacionInicial,  // Población según tamaño
             10,                 // Máximo de generaciones
-            0.75,               // Probabilidad de mutación (aumentada para mejor visualización)
+            0.75,               // Probabilidad de mutación
             piezasBase
         );
     }
     
     /**
      * Calcula la población inicial según el tamaño del tablero.
+     * @param tamaño Tamaño del tablero.
+     * @return Tamaño de la población inicial.
      */
     private static int calcularPoblacionInicial(int tamaño) {
         switch(tamaño) {
@@ -68,7 +75,11 @@ public class Genetico {
     }
 
     /**
-     * Constructor completo.
+     * Constructor.
+     * @param tamañoTablero Tamaño del tablero (tamaño x tamaño).
+     * @param poblacionInicial Tamaño de la población inicial.
+     * @param maxGeneraciones Máximo de generaciones a ejecutar.
+     * @param probMutacion Probabilidad de mutación
      */
     public Genetico(int tamañoTablero, int poblacionInicial, int maxGeneraciones,
                     double probMutacion, ArrayList<Pieza> piezasBase) {
@@ -89,6 +100,8 @@ public class Genetico {
     
     /**
      * Calcula la cantidad de hijos a generar según el tamaño.
+     * @param tamaño Tamaño del tablero.
+     * @return Cantidad de hijos a generar.
      */
     private static int calcularHijos(int tamaño) {
         switch(tamaño) {
@@ -103,14 +116,13 @@ public class Genetico {
         }
     }
 
+    // Getters para medidas empíricas
     public long getComparaciones() {
         return comparaciones;
     }
-
     public long getAsignaciones() {
         return asignaciones;
     }
-
     public long getInstrucciones() {
         instrucciones = comparaciones + asignaciones;
         return instrucciones;
@@ -118,6 +130,7 @@ public class Genetico {
 
     /**
      * Ejecuta el algoritmo genético completo.
+     * Mide el tiempo de ejecución y reporta estadísticas detalladas.
      */
     public void ejecutar() {
 
@@ -164,9 +177,9 @@ public class Genetico {
 
             // Generar el resto de la población (hijos)
             int hijosAGenerar = hijosGenerados;
-            int contadorHijos = 0;
+           // int contadorHijos = 0;
             int idIndividuo = 1;
-            while (nuevaPoblacion.size() < poblacionInicial + hijosAGenerar) {
+            while (nuevaPoblacion.size() < poblacionInicial + hijosAGenerar) { 
 
                 Cromosoma padre1 = seleccionarPadre();
                 Cromosoma padre2 = seleccionarPadre();
@@ -177,7 +190,7 @@ public class Genetico {
                 if (hayDuplicados) {
                     mutar(hijo, idIndividuo);
                     idIndividuo++;
-                }
+                } 
 
                 nuevaPoblacion.add(hijo);
                 asignaciones++;
@@ -195,6 +208,13 @@ public class Genetico {
 
     /**
      * Imprime resultados cuando hay solución perfecta.
+     * @param gen Generación en la que se encontró la solución.
+     * @param mejor Mejor cromosoma encontrado.
+     * @param perfecta Indica si la solución es perfecta.
+     * @param inicio Tiempo de inicio.
+     * @param memoriaInicial Memoria inicial.
+     * @param runtime Instancia de Runtime para medir memoria.
+     * @return void
      */
     private void imprimirResultados(int gen, Cromosoma mejor, boolean perfecta,
                                     long inicio, long memoriaInicial, Runtime runtime) {
@@ -222,6 +242,11 @@ public class Genetico {
 
     /**
      * Imprime resultados finales si no se encontró solución perfecta.
+     * @param mejorGlobal Mejor cromosoma encontrado.
+     * @param inicio Tiempo de inicio.
+     * @param memoriaInicial Memoria inicial.
+     * @param runtime Instancia de Runtime para medir memoria.
+     * @return void
      */
     private void imprimirResultadosFinales(Cromosoma mejorGlobal,
                                            long inicio, long memoriaInicial, Runtime runtime) {
@@ -249,6 +274,7 @@ public class Genetico {
 
     /**
      * Imprime los 3 mejores cromosomas finales.
+     * @return void
      */
     private void imprimirTop3() {
         poblacion.ordenarPorFitness();
@@ -263,6 +289,7 @@ public class Genetico {
 
     /**
      * Selección por torneo.
+     * @return Cromosoma seleccionado como padre.
      */
     private Cromosoma seleccionarPadre() {
         int k = 3;
@@ -282,9 +309,12 @@ public class Genetico {
     }
 
     /**
-     * Cruce válido: PMX (Partially Mapped Crossover) adaptado para matrices 2D.
+     * Cruce válido entre dos padres.
      * Garantiza que no hay piezas duplicadas ni faltantes.
      * Muestra puntuaciones de padres e hijo.
+     * @param p1 Padre 1.
+     * @param p2 Padre 2.
+     * @return Cromosoma hijo resultante del cruce.
      */
     private Cromosoma cruzar(Cromosoma p1, Cromosoma p2) {
         Pieza[][] genes = new Pieza[tamañoTablero][tamañoTablero];
@@ -337,7 +367,7 @@ public class Genetico {
             }
         }
         
-        // Convertir array 1D de vuelta a matriz 2D
+        // Convetir el array del hijo de vuelta a matriz 
         int index = 0;
         for (int i = 0; i < tamañoTablero; i++) {
             for (int j = 0; j < tamañoTablero; j++) {
@@ -348,7 +378,7 @@ public class Genetico {
         
         Cromosoma hijoGenerado = new Cromosoma(genes);
         
-        // Mostrar información del cruce (dos hijos como demostración)
+        // Mostrar información del cruce
         if (!yaMostroProceso) {
             System.out.println("\n======= DEMOSTRACIÓN DEL PROCESO GENÉTICO =======");
         }
@@ -373,7 +403,9 @@ public class Genetico {
     }
     
     /**
-     * Convierte una matriz 2D a un array 1D.
+     * Convierte una matriz en una lista
+     * @param matriz Matriz de piezas.
+     * @return Array unidimensional de piezas.
      */
     private Pieza[] matrizA1D(Pieza[][] matriz) {
         Pieza[] array = new Pieza[tamañoTablero * tamañoTablero];
@@ -391,6 +423,9 @@ public class Genetico {
      * Solo acepta la mutación si el fitness mejora o se mantiene igual.
      * Si el fitness empeora, descarta el cambio.
      * Muestra todas las mutaciones intentadas con el ID del individuo y las piezas.
+     * @param cromosoma Cromosoma a mutar.
+     * @param idIndividuo ID del individuo para mostrar en la mutación.
+     * @return void
      */
     private void mutar(Cromosoma cromosoma, int idIndividuo) {
 
@@ -433,6 +468,7 @@ public class Genetico {
             // Mostrar información de la mutación con ID del individuo y piezas
             System.out.println("\n[MUTACIÓN INTENTADA - INDIVIDUO #" + idIndividuo + "]");
             System.out.println("  Posiciones: (" + f1 + "," + c1 + ") <-> (" + f2 + "," + c2 + ")");
+            System.out.println("Piezas intercambiadas:");
             System.out.println("  Piezas: [" + pieza1Info + "] <-> [" + pieza2Info + "]");
             System.out.println("  Fitness ANTES: " + fitnessAntes + " | Fitness DESPUÉS: " + fitnessDespues);
 
@@ -456,6 +492,8 @@ public class Genetico {
     /**
      * Detecta si hay cromosomas duplicados en la población.
      * Dos cromosomas son iguales si tienen el mismo fitness y la misma configuración.
+     * @param poblacion Lista de cromosomas.
+     * @return true si hay duplicados, false en caso contrario.
      */
     private boolean detectarDuplicados(ArrayList<Cromosoma> poblacion) {
         for (int i = 0; i < poblacion.size(); i++) {
@@ -471,6 +509,9 @@ public class Genetico {
     
     /**
      * Verifica si dos cromosomas son idénticos.
+     * @param c1 Cromosoma 1.
+     * @param c2 Cromosoma 2.
+     * @return true si son iguales, false en caso contrario.
      */
     private boolean sonIguales(Cromosoma c1, Cromosoma c2) {
         Pieza[][] genes1 = c1.getGenes();
@@ -498,6 +539,9 @@ public class Genetico {
     /**
      * Selecciona los N mejores cromosomas de una población.
      * Ordena por fitness y retorna los mejores N individuos.
+     * @param poblacion Lista de cromosomas.
+     * @param cantidad Cantidad de mejores a seleccionar.
+     * @return Lista de los mejores cromosomas seleccionados.
      */
     private ArrayList<Cromosoma> seleccionarMejores(ArrayList<Cromosoma> poblacion, int cantidad) {
         // Ordenar por fitness descendente
